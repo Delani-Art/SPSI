@@ -1,4 +1,4 @@
-# SPSI (Sistema de Processamento de Sensores Industriais)
+# Sistema de Processamento de Sensores Industriais
 
 ## Descrição do Projeto
 Este projeto implementa um sistema em linguagem C para processamento de dados de sensores industriais, dividido em três programas:
@@ -27,8 +27,8 @@ Este projeto implementa um sistema em linguagem C para processamento de dados de
     gcc gera_teste.c utils.c -o teste
 
   ### Execução
-  - comece pelo programa de teste que vai gerar um arquivo 
-    Exemplo comparativo dos parametros permitidos:
+  - comece pelo programa de teste que vai gerar um arquivo chamado "teste.txt" 
+    Exemplo comparativo dos parametros:
       .\teste.exe 01/06/2024 15/06/2024 temp01 CONJ_Q press01 CONJ_Z door01 BINARIO cod01 TEXTO...
       .\teste.exe <data_inicial> <data_final> <sensor1> <tipo1> <sensor2> <tipo2> <sensor3> <tipo3> <sensor4> <tipo4>...
 
@@ -49,4 +49,3 @@ Este projeto implementa um sistema em linguagem C para processamento de dados de
   - Após criar o teste.txt, execute o programa para organizar os timestamps em ordem decrescente.
   - serão criados x arquivos de acordo com quantos sensores você havia solicitado.
   - agora pode usar o programa para consultar um timestamp e ver se está funcionando corretamente.
-

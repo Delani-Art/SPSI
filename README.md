@@ -36,6 +36,7 @@ Este projeto implementa um sistema em linguagem C para processamento de dados de
   ### Execução
   - Comece pelo programa de teste que vai gerar um arquivo chamado "teste.txt" 
     Exemplo comparativo dos parametros:
+    
       .\teste.exe 01/06/2024 15/06/2024 temp01 CONJ_Q press01 CONJ_Z door01 BINARIO cod01 TEXTO...
       .\teste.exe <data_inicial> <data_final> <sensor1> <tipo1> <sensor2> <tipo2> <sensor3> <tipo3> <sensor4> <tipo4>...
 

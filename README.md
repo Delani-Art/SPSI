@@ -3,14 +3,21 @@
 ## Descrição do Projeto
 Este projeto implementa um sistema em linguagem C para processamento de dados de sensores industriais, dividido em três programas:
 
-- **Programa 1 - organiza_dados.c:**  
-  Processa um arquivo bruto de leituras de sensores, separa os dados por sensor, ordena por timestamp e cria arquivos separados para cada sensor.
+- **Programa 1 - organiza_dados.c:**
+  - Processa um arquivo bruto (`teste.txt`) com leituras de sensores.
+  - Separa os dados por sensor.
+  - Ordena por timestamp em **ordem decrescente**.
+  - Gera arquivos `.dat` individuais por sensor.
 
 - **Programa 2 - consulta_sensor.c:**  
-  Realiza buscas binárias nos arquivos de sensores, localizando a leitura mais próxima de um timestamp informado.
+  - Permite consultar a leitura mais próxima de um **timestamp específico**.
+  - Usa **busca binária em arquivos decrescentes** para alto desempenho.
+  - Exibe o timestamp e também a **data legível da leitura**.
 
 - **Programa 3 - gera_teste.c:**  
-  Gera um arquivo de teste com dados simulados de sensores, com valores e timestamps aleatórios dentro de um intervalo de tempo definido.
+  - Gera um arquivo de teste com 2000 leituras para cada sensor informado.
+  - Timestamps são aleatórios dentro de um intervalo definido pelo usuário.
+  - Valores são gerados conforme o tipo de sensor (`CONJ_Z`, `BINARIO`, etc.).
 
 ---
 

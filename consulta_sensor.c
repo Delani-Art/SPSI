@@ -2,12 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <time.h>
+#include <ctype.h>
 #include "utils.h"
 
+#define MAX_LEITURAS 10000
+
 typedef struct {
-    time_t timestamp;    // Tempo da leitura 
-    char id_sensor[32];  // sensor
-    char valor[64];      // Valor lido
+    time_t timestamp;
+    char id_sensor[32];
+    char valor[64];
 } Leitura;
 
 int busca_binaria_decrescente(Leitura* leituras, int n, time_t alvo) {
@@ -33,33 +37,74 @@ int busca_binaria_decrescente(Leitura* leituras, int n, time_t alvo) {
     return melhor;
 }
 
+void exibir_data_legivel(time_t ts) {           // Converte um timestamp para data legível
+    char data[64];
+    struct tm* tm_info = localtime(&ts);
+    strftime(data, sizeof(data), "%d/%m/%Y %H:%M:%S", tm_info);
+    printf("Data legível: %s\n", data);
+}
+
+int eh_numero(const char* s) {                  // Verifica se a string é um número (simples validação para timestamp)
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)s[i])) return 0;
+    }
+    return 1;
+}
+
 int main(int argc, char* argv[]) {
-    if (argc != 3) {    // Verifica se foram passados os argumentos (sensor e timestamp)
-        printf("Uso: %s sensor timestamp\n", argv[0]);
+    if (argc != 3) {                            // Verifica se foram passados os argumentos (sensor e timestamp)
+        printf("Uso: %s <nome_do_sensor> <timestamp>\n", argv[0]);
         return 1;
     }
 
-    char nome_arquivo[64];
-    sprintf(nome_arquivo, "%s.dat", argv[1]);
-    time_t alvo = atoll(argv[2]);    // Converte o argumento timestamp para time_t
+    if (!eh_numero(argv[2])) {                   // Validação básica do timestamp
+        printf("Erro: o timestamp deve ser um número inteiro positivo.\n");
+        return 1;
+    }
 
-    FILE* arquivo = fopen(nome_arquivo, "r");
+    char nome_arquivo[64];                        // Monta o nome do arquivo do sensor
+    snprintf(nome_arquivo, sizeof(nome_arquivo), "%s.dat", argv[1]);
+    time_t alvo = atoll(argv[2]);
+
+    FILE* arquivo = fopen(nome_arquivo, "r");    // Tenta abrir o arquivo .dat do sensor
     if (!arquivo) {
-        perror("Erro ao abrir arquivo");
+        perror("Erro ao abrir arquivo do sensor");
         return 1;
     }
-    
-    Leitura leituras[10000];    // Lê todas as leituras do sensor para a memória
-    int total = 0;
 
-    while (fscanf(arquivo, "%ld %s %s", &leituras[total].timestamp, leituras[total].id_sensor, leituras[total].valor) == 3) {
-        total++;    // Conta quantas leituras foram carregadas
+    Leitura leituras[MAX_LEITURAS];        
+    int total = 0;
+    int linha = 1;
+
+    while (fscanf(arquivo, "%ld %31s %63s",       // Leitura segura do arquivo
+                  &leituras[total].timestamp, 
+                  leituras[total].id_sensor, 
+                  leituras[total].valor) == 3) {
+
+        total++;
+        if (total >= MAX_LEITURAS) {
+            printf("Limite de %d leituras atingido.\n", MAX_LEITURAS);
+            break;
+        }
+        linha++;
     }
+
+    if (!feof(arquivo)) {
+        printf("Erro na leitura do arquivo na linha %d. Verifique se o formato está correto.\n", linha);
+        fclose(arquivo);
+        return 1;
+    }
+
     fclose(arquivo);
 
-    int indice = busca_binaria_decrescente(leituras, total, alvo);
+    int indice = busca_binaria_decrescente(leituras, total, alvo);    // Executa busca binária para encontrar leitura mais próxima
     if (indice >= 0) {
-        printf("Leitura mais próxima:\n%ld %s %s\n", leituras[indice].timestamp, leituras[indice].id_sensor, leituras[indice].valor);
+        Leitura l = leituras[indice];
+        printf("Leitura mais próxima:\n");
+        printf("Timestamp: %ld\n", l.timestamp);
+        exibir_data_legivel(l.timestamp);
+        printf("Sensor: %s\n", l.id_sensor);
+        printf("Valor: %s\n", l.valor);
     } else {
         printf("Nenhuma leitura encontrada.\n");
     }
